@@ -66,12 +66,15 @@ int main(int argc, char * argv [])
 	// Program argument parsing
 	//-----------------------------------
 
-	if (argc != 4) {
-	    cerr << "Usage: " << argv[0] << " input-CT-image temp-folder output-image\n";
-	    return EXIT_FAILURE;
-	}
-
-    FilenameDb filenames(argv[1], argv[3], argv[2]);
+	//if (argc != 4) {
+	//    cerr << "Usage: " << argv[0] << " input-CT-image temp-folder output-image\n";
+	//    return EXIT_FAILURE;
+	//}
+    string argv1 = "C:\\Project\\bone-segmentation\\sample-volumes\\001-CT.nii";
+    string argv2 = "C:\\Project\\bone-segmentation";
+    string argv3 = "C:\\Project\\bone-segmentation\\output.nii";
+    //FilenameDb filenames(argv[1], argv[3], argv[2]);
+    FilenameDb filenames(argv1, argv3, argv2);
 
 	//-----------------------------------
 	// Preprocessing
