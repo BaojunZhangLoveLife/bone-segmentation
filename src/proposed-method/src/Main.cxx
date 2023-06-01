@@ -13,10 +13,6 @@
 
 =========================================================================*/
 
-
-
-
-
 #include "Globals.hpp"
 #include "ImageUtils.hpp"
 #include "ImageSplitter.hpp"
@@ -27,8 +23,6 @@
 
 #include "boost/tuple/tuple.hpp"
 #include "boost/lexical_cast.hpp"
-
-
 
 /**
 Class for unified and platform-independent
@@ -58,27 +52,15 @@ struct FilenameDb {
             "/gc-output-part-" + boost::lexical_cast<string>(part) + ".nii";
         return m_tempDir + filename;
     }
-
-
 };
-
-
-
-
-
-
-
 
 int main(int argc, char * argv [])
 {
-
-
     if (sizeof(void*) == 8) {
         cerr << "Warning: This executable is compiled for 64bit architectures.\n";
         cerr << "Compilition for 32bit would significatly descrease memory requirements.\n";
         cerr << "\n";
     }
-
 
 	//-----------------------------------
 	// Program argument parsing
@@ -134,7 +116,6 @@ int main(int argc, char * argv [])
     // no longer exist and therefore they don't occupy memory.
     // this is important in case the input CT is very large (cca 1GB) and
     // the graph-cut segmentation will be performed per partes.
-
 
 	//-----------------------------------
 	// Segmentation
@@ -192,11 +173,8 @@ int main(int argc, char * argv [])
 	//-----------------------------------
 	// Bone Separation
 	//-----------------------------------
-
     logSetStage("Bone Separation");
     UCharImagePtr finalResult = BoneSeparation::compute(assembledResult);
-
-
 
 	//-----------------------------------
 	// Saving the result, Cleaning up
@@ -206,7 +184,6 @@ int main(int argc, char * argv [])
     logger("Writing the result to %s") % filenames.output();
 
     ImageUtils<UCharImage>::writeImage(filenames.output(), finalResult);
-
 
 	return EXIT_SUCCESS;
 }
