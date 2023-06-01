@@ -85,8 +85,6 @@ int main(int argc, char * argv [])
     sigmasLargeScale.push_back(0.6);
     sigmasLargeScale.push_back(0.8);
 
-
-
     vector<ImageRegion> subRegions;
 
     {

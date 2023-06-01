@@ -13,17 +13,12 @@
 
 =========================================================================*/
 
-
-
-
-
 #include "Globals.hpp"
 #include "ImageUtils.hpp"
 #include "FilterUtils.hpp"
 #include "SheetnessMeasure.hpp"
 #include "ChamferDistanceTransform.hpp"
 #include "boost/tuple/tuple.hpp"
-
 
 namespace Preprocessing {
 
@@ -46,8 +41,7 @@ FloatImagePtr multiscaleSheetness(
 
         logger("Computing single-scale sheetness, sigma=%4.2f") % scales[i];
 
-        MemoryEfficientObjectnessFilter *sheetnessFilter =
-            new MemoryEfficientObjectnessFilter();
+        MemoryEfficientObjectnessFilter *sheetnessFilter = new MemoryEfficientObjectnessFilter();
         sheetnessFilter->SetImage(img);
         sheetnessFilter->SetAlpha(0.5);
         sheetnessFilter->SetBeta(0.5);
@@ -97,8 +91,6 @@ FloatImagePtr chamferDistance(UCharImagePtr image) {
     CDT cdt;
     return cdt.compute(image, CDT::MANHATTEN);
 }
-
-
 
 /*
 Input: Normalized CT image, scales for the sheetness measure
