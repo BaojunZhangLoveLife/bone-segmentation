@@ -71,8 +71,8 @@ int main(int argc, char * argv [])
 	//    return EXIT_FAILURE;
 	//}
     string argv1 = "C:\\Project\\bone-segmentation\\sample-volumes\\001-CT.nii";
-    string argv2 = "C:\\Project\\bone-segmentation";
-    string argv3 = "C:\\Project\\bone-segmentation\\output.nii";
+    string argv2 = "C:\\Project\\bone-segmentation\\output";
+    string argv3 = "C:\\Project\\bone-segmentation\\output\\output.nii";
     //FilenameDb filenames(argv[1], argv[3], argv[2]);
     FilenameDb filenames(argv1, argv3, argv2);
 

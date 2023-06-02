@@ -94,15 +94,7 @@ class FilterUtils {
     typedef typename FastMarchingNodeContainer::Pointer FastMarchingNodeContainerPointer;
     typedef typename FastMarchingImageFilterType::NodeType FastMarchingNodeType;
 
-
-
-
-
-
 public:
-
-
-
 
     /**
     Paste the region from the source image to a given position
@@ -125,12 +117,6 @@ public:
 
         return filter->GetOutput();
     }
-
-
-
-
-
-
 
     // output_pixel =  scale * input_pixel + shift
     static OutputImagePointer linearTransform(
@@ -191,10 +177,6 @@ public:
         return castFilter->GetOutput();
     }
 
-
-
-
-
     static OutputImagePointer createEmptyFrom(
         InputImagePointer input
     ) {
@@ -227,9 +209,7 @@ public:
 
 
     // pixel-wise addition of two images
-    static OutputImagePointer add(
-        InputImagePointer image1, InputImagePointer image2
-    ) {
+    static OutputImagePointer add(InputImagePointer image1, InputImagePointer image2) {
         AddFilterPointer addFilter = AddFilterType::New();
         addFilter->SetInput1(image1);
         addFilter->SetInput2(image2);
@@ -237,13 +217,7 @@ public:
         return addFilter->GetOutput();
     }
 
-
-
-
-    static OutputImagePointer mask(
-        InputImagePointer image,
-        InputImagePointer mask
-    ) {
+    static OutputImagePointer mask(InputImagePointer image,InputImagePointer mask){
         MaskImageFilterPointer filter = MaskImageFilterType::New();
 
         filter->SetInput1(image);
@@ -252,10 +226,6 @@ public:
 
         return filter->GetOutput();
     }
-
-
-
-
 
     static OutputImagePointer negatedMask(
         InputImagePointer image,
@@ -270,17 +240,14 @@ public:
         return filter->GetOutput();
     }
 
-
-
-
-
     static OutputImagePointer binaryThresholding(
         InputImagePointer inputImage,
         InputImagePixelType lowerThreshold,
         InputImagePixelType upperThreshold,
         OutputImagePixelType insideValue = 1,
         OutputImagePixelType outsideValue = 0
-    ) {
+    )
+    {
         BinaryThresholdFilterPointer thresholder = BinaryThresholdFilter::New();
         thresholder->SetInput(inputImage);
 
@@ -294,10 +261,6 @@ public:
         return thresholder->GetOutput();
     }
 
-
-
-
-
     // assign pixels with intensities above upperThreshold
     // value upperThreshold and below lowerThreshold value
     // lowerThreshold
@@ -310,19 +273,11 @@ public:
         itk::ImageRegionIterator<InputImage> it(
             inputImage, inputImage->GetLargestPossibleRegion());
         for (it.GoToBegin(); !it.IsAtEnd(); ++it) {
-            it.Set(
-                std::min(
-                    upperThreshold,
-                    std::max(it.Get(),lowerThreshold)
-                )
-            );
+            it.Set(std::min(upperThreshold,std::max(it.Get(),lowerThreshold)));
         }
 
         return cast(inputImage);
     }
-
-
-
 
     // perform erosion (mathematical morphology) with a given label image
     // using a ball with a given radius
