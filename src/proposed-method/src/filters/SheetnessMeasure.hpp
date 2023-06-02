@@ -86,8 +86,6 @@ private:
 	void GenerateObjectnessImage();
 };
 
-
-
 using namespace std;
 
 MemoryEfficientObjectnessFilter::MemoryEfficientObjectnessFilter()
@@ -100,10 +98,6 @@ MemoryEfficientObjectnessFilter::MemoryEfficientObjectnessFilter()
 	scaleObjectnessMeasure = false;
 	bright = 1;
 }
-
-//
-//
-//
 
 void MemoryEfficientObjectnessFilter::SetImage(ImagePointerType image)		{ input_image = image; }
 void MemoryEfficientObjectnessFilter::SetVectorImage(VectorImagePointerType image)		{ vector_image = image; }
