@@ -96,8 +96,7 @@ int main(int argc, char * argv [])
         UCharImagePtr roi;
         FloatImagePtr sheetness;
         UCharImagePtr softTissueEst;
-        boost::tie(roi, sheetness, softTissueEst) =
-            Preprocessing::compute(inputCT, sigmaSmallScale, sigmasLargeScale);
+        boost::tie(roi, sheetness, softTissueEst) = Preprocessing::compute(inputCT, sigmaSmallScale, sigmasLargeScale);
 
         logSetStage("Disassembly");
         subRegions = ImageSplitter<UCharImage>::splitIntoRegions(roi);
@@ -107,9 +106,7 @@ int main(int argc, char * argv [])
         // to save memory on the disk
         ImageUtils<UCharImage>::writeImage(filenames.roi(), roi);
         ImageUtils<UCharImage>::writeImage(filenames.softTissueEst(), softTissueEst);
-        ImageUtils<CharImage>::writeImage(filenames.sheetness(),
-            FilterUtils<FloatImage,CharImage>::linearTransform(sheetness,100,0)
-        );
+        ImageUtils<CharImage>::writeImage(filenames.sheetness(), FilterUtils<FloatImage,CharImage>::linearTransform(sheetness,100,0));
 
     }
 
