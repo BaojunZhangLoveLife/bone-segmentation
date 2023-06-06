@@ -43,7 +43,6 @@
 
 template<class InputImage, class OutputImage = InputImage>
 class FilterUtils {
-
     typedef typename InputImage::Pointer  InputImagePointer;
     typedef typename InputImage::PixelType InputImagePixelType;
     typedef typename InputImage::IndexType InputImageIndex;
@@ -53,7 +52,6 @@ class FilterUtils {
     typedef typename OutputImage::IndexType OutputImageIndex;
     typedef typename OutputImage::RegionType OutputImageRegion;
     typedef typename OutputImage::PixelType OutputImagePixelType;
-
 
     typedef itk::FlatStructuringElement< InputImage::ImageDimension > StructuringElementType;
     typedef typename StructuringElementType::RadiusType StructuringElementTypeRadius;
@@ -101,13 +99,12 @@ public:
     in the destination image
     */
     static OutputImagePointer paste(
-        InputImagePointer sourceImage, InputImageRegion sourceRegion,
-        OutputImagePointer destinationImage, OutputImageIndex destinationIndex
-    ) {
+        InputImagePointer sourceImage, 
+        InputImageRegion sourceRegion,
+        OutputImagePointer destinationImage,
+        OutputImageIndex destinationIndex) {
 
-        PasteImageFilterPointer filter =
-            PasteImageFilterType::New();
-
+        PasteImageFilterPointer filter = PasteImageFilterType::New();
         filter->SetSourceImage(sourceImage);
         filter->SetSourceRegion(sourceRegion);
         filter->SetDestinationImage(destinationImage);
@@ -125,8 +122,7 @@ public:
         OutputImagePixelType shift = 0
     ) {
 
-        ShiftScaleImageFilterPointer filter =
-            ShiftScaleImageFilterType::New();
+        ShiftScaleImageFilterPointer filter = ShiftScaleImageFilterType::New();
 
         filter->SetInput(image);
         filter->SetScale(scale);
@@ -137,13 +133,8 @@ public:
 
 
     // smooth the image with a discrete gaussian filter
-    static OutputImagePointer gaussian(
-        InputImagePointer image, float variance
-    ) {
-
-        DiscreteGaussianImageFilterPointer filter =
-            DiscreteGaussianImageFilterType::New();
-
+    static OutputImagePointer gaussian(InputImagePointer image, float variance) {
+        DiscreteGaussianImageFilterPointer filter = DiscreteGaussianImageFilterType::New();
         filter->SetInput(image);
         filter->SetVariance(variance);
         filter->Update();
@@ -151,23 +142,14 @@ public:
         return filter->GetOutput();
     }
 
-
-
-
     // relabel components according to its size.
     // Largest component 1, second largest 2, ...
     static OutputImagePointer relabelComponents(InputImagePointer image) {
-
-        RelabelComponentImageFilterPointer filter =
-            RelabelComponentImageFilterType::New();
-
+        RelabelComponentImageFilterPointer filter = RelabelComponentImageFilterType::New();
         filter->SetInput(image);
         filter->Update();
-
         return filter->GetOutput();
     }
-
-
 
     // cast the image to the output type
     static OutputImagePointer cast(InputImagePointer image) {
@@ -177,12 +159,8 @@ public:
         return castFilter->GetOutput();
     }
 
-    static OutputImagePointer createEmptyFrom(
-        InputImagePointer input
-    ) {
-
-        OutputImagePointer output = OutputImageUtils::createEmpty(
-            input->GetLargestPossibleRegion().GetSize());
+    static OutputImagePointer createEmptyFrom(InputImagePointer input) {
+        OutputImagePointer output = OutputImageUtils::createEmpty(input->GetLargestPossibleRegion().GetSize());
         output->SetOrigin(input->GetOrigin());
         output->SetSpacing(input->GetSpacing());
         output->SetDirection(input->GetDirection());
@@ -191,8 +169,6 @@ public:
         return output;
 
     }
-
-
 
     static OutputImagePointer substract(
         InputImagePointer image1, InputImagePointer image2
@@ -203,10 +179,6 @@ public:
         substractFilter->Update();
         return substractFilter->GetOutput();
     }
-
-
-
-
 
     // pixel-wise addition of two images
     static OutputImagePointer add(InputImagePointer image1, InputImagePointer image2) {
@@ -227,16 +199,11 @@ public:
         return filter->GetOutput();
     }
 
-    static OutputImagePointer negatedMask(
-        InputImagePointer image,
-        InputImagePointer mask
-    ) {
+    static OutputImagePointer negatedMask(InputImagePointer image,InputImagePointer mask) {
         MaskNegatedImageFilterPointer filter = MaskNegatedImageFilterType::New();
-
         filter->SetInput1(image);
         filter->SetInput2(mask);
         filter->Update();
-
         return filter->GetOutput();
     }
 
@@ -245,9 +212,8 @@ public:
         InputImagePixelType lowerThreshold,
         InputImagePixelType upperThreshold,
         OutputImagePixelType insideValue = 1,
-        OutputImagePixelType outsideValue = 0
-    )
-    {
+        OutputImagePixelType outsideValue = 0){
+
         BinaryThresholdFilterPointer thresholder = BinaryThresholdFilter::New();
         thresholder->SetInput(inputImage);
 
@@ -292,9 +258,6 @@ public:
         return erosionFilter->GetOutput();
     }
 
-
-
-
     // perform erosion (mathematical morphology) with a given label image
     // using a ball with a given radius
     static OutputImagePointer dilation(
@@ -314,8 +277,6 @@ public:
         return dilateFilter->GetOutput();
     }
 
-
-
     // compute connected components of a (binary image)
     static OutputImagePointer connectedComponents(InputImagePointer image) {
         typedef typename ConnectedComponentImageFilterType::Pointer ConnectedComponentImageFilterPointer;
@@ -328,9 +289,6 @@ public:
 
         return filter->GetOutput();
     }
-
-
-
 
     /**
     Compute distance from the object using fast marching front.
@@ -379,13 +337,4 @@ public:
         return  fastMarcher->GetOutput();
 
     }
-
-
-
-
-
-
-
-
-
 };
