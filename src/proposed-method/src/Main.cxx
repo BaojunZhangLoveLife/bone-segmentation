@@ -73,30 +73,28 @@ int main(int argc, char * argv [])
     sigmasLargeScale.push_back(0.6);
     sigmasLargeScale.push_back(0.8);
 
+    logSetStage("Init");
+    logger("Loading image %s") % filenames.input();
+    ShortImagePtr inputCT = ImageUtils<ShortImage>::readImage(filenames.input());
+
+    logSetStage("Preprocessing");
+    UCharImagePtr roi;
+    FloatImagePtr sheetness;
+    UCharImagePtr softTissueEst;
+    boost::tie(roi, sheetness, softTissueEst) = Preprocessing::compute(inputCT, sigmaSmallScale, sigmasLargeScale);
+
+    logSetStage("Disassembly");
     vector<ImageRegion> subRegions;
+    subRegions = ImageSplitter<UCharImage>::splitIntoRegions(roi);
 
-    {
-        logSetStage("Init");
-        logger("Loading image %s") % filenames.input();
-        ShortImagePtr inputCT = ImageUtils<ShortImage>::readImage(filenames.input());
+    // save results of the preprocessing
+    // the sheetness is scaled to -100,100 and saved as char-image
+    // to save memory on the disk
+    ImageUtils<UCharImage>::writeImage(filenames.roi(), roi);
+    ImageUtils<UCharImage>::writeImage(filenames.softTissueEst(), softTissueEst);
+    ImageUtils<CharImage>::writeImage(filenames.sheetness(), FilterUtils<FloatImage,CharImage>::linearTransform(sheetness,100,0));
 
-        logSetStage("Preprocessing");
-        UCharImagePtr roi;
-        FloatImagePtr sheetness;
-        UCharImagePtr softTissueEst;
-        boost::tie(roi, sheetness, softTissueEst) = Preprocessing::compute(inputCT, sigmaSmallScale, sigmasLargeScale);
-
-        logSetStage("Disassembly");
-        subRegions = ImageSplitter<UCharImage>::splitIntoRegions(roi);
-
-        // save results of the preprocessing
-        // the sheetness is scaled to -100,100 and saved as char-image
-        // to save memory on the disk
-        ImageUtils<UCharImage>::writeImage(filenames.roi(), roi);
-        ImageUtils<UCharImage>::writeImage(filenames.softTissueEst(), softTissueEst);
-        ImageUtils<CharImage>::writeImage(filenames.sheetness(), FilterUtils<FloatImage,CharImage>::linearTransform(sheetness,100,0));
-
-    }
+    
 
     // at this point, the images inputCT, roi, sheetness and softTissueEst
     // no longer exist and therefore they don't occupy memory.
