@@ -56,12 +56,6 @@ struct FilenameDb {
 
 int main(int argc, char * argv [])
 {
-    if (sizeof(void*) == 8) {
-        cerr << "Warning: This executable is compiled for 64bit architectures.\n";
-        cerr << "Compilition for 32bit would significatly descrease memory requirements.\n";
-        cerr << "\n";
-    }
-
 	//-----------------------------------
 	// Program argument parsing
 	//-----------------------------------

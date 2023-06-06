@@ -21,66 +21,59 @@
 #include "boost/tuple/tuple.hpp"
 
 namespace Preprocessing {
+    using namespace boost;
+    // compute multiscale sheetness measure
+    // if roi is specified, than compute the measure only for pixels within ROI
+    // (i.e. pixels where roi(pixel) >= 1)
+    FloatImagePtr multiscaleSheetness(FloatImagePtr img,vector<float> scales, UCharImagePtr roi ) {
+        assert(scales.size() >= 1);
 
-using namespace boost;
+        FloatImagePtr multiscaleSheetness;
 
+        for (unsigned i = 0; i < scales.size(); ++i) {
 
-// compute multiscale sheetness measure
-// if roi is specified, than compute the measure only for pixels within ROI
-// (i.e. pixels where roi(pixel) >= 1)
-FloatImagePtr multiscaleSheetness(
-				  FloatImagePtr img,
-				  vector<float> scales,
-				  UCharImagePtr roi ) {
+            logger("Computing single-scale sheetness, sigma=%4.2f") % scales[i];
 
-    assert(scales.size() >= 1);
+            MemoryEfficientObjectnessFilter *sheetnessFilter = new MemoryEfficientObjectnessFilter();
+            sheetnessFilter->SetImage(img);
+            sheetnessFilter->SetAlpha(0.5);
+            sheetnessFilter->SetBeta(0.5);
+            sheetnessFilter->SetSigma(scales[i]);
+            sheetnessFilter->SetObjectDimension(2);
+            sheetnessFilter->SetBrightObject(true);
+            sheetnessFilter->ScaleObjectnessMeasureOff();
+            sheetnessFilter->Update();
+            sheetnessFilter->SetROIImage(roi);
 
-    FloatImagePtr multiscaleSheetness;
+            FloatImagePtr singleScaleSheetness = sheetnessFilter->GetOutput();
 
-    for (unsigned i = 0; i < scales.size(); ++i) {
-
-        logger("Computing single-scale sheetness, sigma=%4.2f") % scales[i];
-
-        MemoryEfficientObjectnessFilter *sheetnessFilter = new MemoryEfficientObjectnessFilter();
-        sheetnessFilter->SetImage(img);
-        sheetnessFilter->SetAlpha(0.5);
-        sheetnessFilter->SetBeta(0.5);
-        sheetnessFilter->SetSigma(scales[i]);
-        sheetnessFilter->SetObjectDimension(2);
-        sheetnessFilter->SetBrightObject(true);
-        sheetnessFilter->ScaleObjectnessMeasureOff();
-        sheetnessFilter->Update();
-        sheetnessFilter->SetROIImage(roi);
-
-        FloatImagePtr singleScaleSheetness = sheetnessFilter->GetOutput();
-
-        if (i==0) {
-            multiscaleSheetness = singleScaleSheetness;
-            continue;
-        }
-
-        // update the multiscale sheetness
-        // take the value which is larger in absolute value
-        itk::ImageRegionIterator<FloatImage>
-            itMulti(singleScaleSheetness,singleScaleSheetness->GetLargestPossibleRegion());
-        itk::ImageRegionIterator<FloatImage>
-            itSingle(multiscaleSheetness,multiscaleSheetness->GetLargestPossibleRegion());
-        for (
-                itMulti.GoToBegin(),itSingle.GoToBegin();
-                !itMulti.IsAtEnd();
-                ++itMulti, ++itSingle
-            ) {
-                float multiVal = itMulti.Get();
-                float singleVal = itSingle.Get();
-
-                // higher absolute value is better
-                if (abs(singleVal) > abs(multiVal)) {
-                    itMulti.Set(singleVal);
-                }
+            if (i==0) {
+                multiscaleSheetness = singleScaleSheetness;
+                continue;
             }
-    } // iteration trough scales
 
-    return multiscaleSheetness;
+            // update the multiscale sheetness
+            // take the value which is larger in absolute value
+            itk::ImageRegionIterator<FloatImage>
+                itMulti(singleScaleSheetness,singleScaleSheetness->GetLargestPossibleRegion());
+            itk::ImageRegionIterator<FloatImage>
+                itSingle(multiscaleSheetness,multiscaleSheetness->GetLargestPossibleRegion());
+            for (
+                    itMulti.GoToBegin(),itSingle.GoToBegin();
+                    !itMulti.IsAtEnd();
+                    ++itMulti, ++itSingle
+                ) {
+                    float multiVal = itMulti.Get();
+                    float singleVal = itSingle.Get();
+
+                    // higher absolute value is better
+                    if (abs(singleVal) > abs(multiVal)) {
+                        itMulti.Set(singleVal);
+                    }
+                }
+        } // iteration trough scales
+
+        return multiscaleSheetness;
 
 }
 
@@ -96,13 +89,9 @@ FloatImagePtr chamferDistance(UCharImagePtr image) {
 Input: Normalized CT image, scales for the sheetness measure
 Output: (ROI, MultiScaleSheetness, SoftTissueEstimation)
 */
-boost::tuples::tuple<UCharImagePtr, FloatImagePtr, UCharImagePtr> compute(
-    ShortImagePtr inputCT,
-    float sigmaSmallScale,
-    vector<float> sigmasLargeScale) {
+boost::tuples::tuple<UCharImagePtr, FloatImagePtr, UCharImagePtr> compute(ShortImagePtr inputCT,float sigmaSmallScale,vector<float> sigmasLargeScale) {
 
-    UCharImagePtr roi;
-    UCharImagePtr softTissueEstimation;
+    UCharImagePtr roi,softTissueEstimation;
     FloatImagePtr sheetness;
 
     {
