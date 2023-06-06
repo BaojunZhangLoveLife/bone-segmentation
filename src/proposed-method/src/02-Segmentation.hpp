@@ -124,6 +124,5 @@ namespace Segmentation {
 
         // finitto :)
         return FilterUtils<UIntImage,UCharImage>::cast(gcOutput);
-
     }
 }

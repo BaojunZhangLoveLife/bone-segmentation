@@ -27,13 +27,9 @@ namespace Preprocessing {
     // (i.e. pixels where roi(pixel) >= 1)
     FloatImagePtr multiscaleSheetness(FloatImagePtr img,vector<float> scales, UCharImagePtr roi ) {
         assert(scales.size() >= 1);
-
         FloatImagePtr multiscaleSheetness;
-
         for (unsigned i = 0; i < scales.size(); ++i) {
-
             logger("Computing single-scale sheetness, sigma=%4.2f") % scales[i];
-
             MemoryEfficientObjectnessFilter *sheetnessFilter = new MemoryEfficientObjectnessFilter();
             sheetnessFilter->SetImage(img);
             sheetnessFilter->SetAlpha(0.5);
@@ -46,38 +42,29 @@ namespace Preprocessing {
             sheetnessFilter->SetROIImage(roi);
 
             FloatImagePtr singleScaleSheetness = sheetnessFilter->GetOutput();
-
             if (i==0) {
                 multiscaleSheetness = singleScaleSheetness;
                 continue;
             }
 
-            // update the multiscale sheetness
-            // take the value which is larger in absolute value
+            // update the multiscale sheetness, take the value which is larger in absolute value
             itk::ImageRegionIterator<FloatImage>
                 itMulti(singleScaleSheetness,singleScaleSheetness->GetLargestPossibleRegion());
             itk::ImageRegionIterator<FloatImage>
                 itSingle(multiscaleSheetness,multiscaleSheetness->GetLargestPossibleRegion());
-            for (
-                    itMulti.GoToBegin(),itSingle.GoToBegin();
-                    !itMulti.IsAtEnd();
-                    ++itMulti, ++itSingle
-                ) {
-                    float multiVal = itMulti.Get();
-                    float singleVal = itSingle.Get();
+            for (itMulti.GoToBegin(),itSingle.GoToBegin();!itMulti.IsAtEnd();++itMulti, ++itSingle) {
+                float multiVal = itMulti.Get();
+                float singleVal = itSingle.Get();
 
-                    // higher absolute value is better
-                    if (abs(singleVal) > abs(multiVal)) {
-                        itMulti.Set(singleVal);
-                    }
+                // higher absolute value is better
+                if (abs(singleVal) > abs(multiVal)) {
+                    itMulti.Set(singleVal);
                 }
+            }
         } // iteration trough scales
 
         return multiscaleSheetness;
-
 }
-
-
 
 FloatImagePtr chamferDistance(UCharImagePtr image) {
     typedef ChamferDistanceTransform<UCharImage, FloatImage> CDT;
