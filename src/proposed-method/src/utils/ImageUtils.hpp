@@ -36,6 +36,7 @@ class ImageUtils {
     typedef typename ReaderType::Pointer  ReaderTypePointer;
     typedef itk::ImageFileWriter< ImageType >  WriterType;
     typedef typename WriterType::Pointer  WriterTypePointer;
+    // 图像复制器
     typedef itk::ImageDuplicator< ImageType > DuplicatorType;
     typedef typename DuplicatorType::Pointer DuplicatorPointerType;
 	typedef itk::RegionOfInterestImageFilter<ImageType,ImageType> ROIFilterType;

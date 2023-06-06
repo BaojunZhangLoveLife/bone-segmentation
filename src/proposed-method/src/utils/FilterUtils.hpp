@@ -264,23 +264,16 @@ public:
     // assign pixels with intensities above upperThreshold
     // value upperThreshold and below lowerThreshold value
     // lowerThreshold
-    static OutputImagePointer thresholding(
-        InputImagePointer inputImage,
-        InputImagePixelType lowerThreshold,
-        InputImagePixelType upperThreshold
-    ) {
+    static OutputImagePointer thresholding(InputImagePointer inputImage,InputImagePixelType lowerThreshold,InputImagePixelType upperThreshold) {
 
-        itk::ImageRegionIterator<InputImage> it(
-            inputImage, inputImage->GetLargestPossibleRegion());
+        itk::ImageRegionIterator<InputImage> it(inputImage, inputImage->GetLargestPossibleRegion());
         for (it.GoToBegin(); !it.IsAtEnd(); ++it) {
             it.Set(std::min(upperThreshold,std::max(it.Get(),lowerThreshold)));
         }
-
         return cast(inputImage);
     }
 
-    // perform erosion (mathematical morphology) with a given label image
-    // using a ball with a given radius
+    // perform erosion (mathematical morphology) with a given label image using a ball with a given radius
     static OutputImagePointer erosion(
         InputImagePointer labelImage, unsigned radius,
         InputImagePixelType valueToErode = 1
