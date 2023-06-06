@@ -20,9 +20,6 @@
 #include <limits>
 #include "Globals.hpp"
 
-//#include "image_utils.h"
-
-
 /*! \brief
 *	Defines a structure allowing to define an shape from the corresponding shape model
 *	shape parameters <=> 3D shape <=> vtk mesh
@@ -56,7 +53,6 @@ public:
 
 	void Update();
 	ImagePointerType GetOutput();
-
 private:
 	ImagePointerType input_image, output_image;
 	VectorImagePointerType vector_image;
@@ -66,9 +62,7 @@ private:
 	float bright;
 	bool scaleObjectnessMeasure;
 
-	void Eigenvalues_3_3_symetric(
-        float M11, float M12, float M13, float M22, float M23, float M33,
-        VectorType & eigenVals);
+	void Eigenvalues_3_3_symetric(float M11, float M12, float M13, float M22, float M23, float M33,VectorType & eigenVals);
 
     void solve_3x3_symmetric_eigensystem(
         float M11, float M12, float M13, float M22, float M23, float M33,
@@ -119,17 +113,22 @@ void MemoryEfficientObjectnessFilter::Update(){
 
 MemoryEfficientObjectnessFilter::ImagePointerType MemoryEfficientObjectnessFilter::GetOutput()	{ return output_image; }
 
-void MemoryEfficientObjectnessFilter::GenerateObjectnessImage(){
+void MemoryEfficientObjectnessFilter::GenerateObjectnessImage()
+{
 	// define variables for image size
 	int w,h,d,wh,whd;
 	w = output_image->GetLargestPossibleRegion().GetSize()[0];
 	h = output_image->GetLargestPossibleRegion().GetSize()[1];
 	d = output_image->GetLargestPossibleRegion().GetSize()[2];
-	wh = w*h;
-	whd = wh*d;
+	wh = w * h;
+	whd = wh * d;
 
 	//variables for browsing through image
-	ImageType::IndexType image_index;	image_index[0]=0;image_index[1]=0;image_index[2]=0;
+	ImageType::IndexType image_index;	
+	image_index[0]=0;
+	image_index[1]=0;
+	image_index[2]=0;
+
 	int add;
 	int pi, mi, pj, mj, pk, mk, p2i, m2i, p2j, m2j, p2k, m2k;
 
@@ -139,8 +138,10 @@ void MemoryEfficientObjectnessFilter::GenerateObjectnessImage(){
 	float hxx, hyy, hzz, hxy, hxz, hyz;
 	float tmp;
 	//float *l; l = (float *)calloc(3,sizeof(float));
-	PixelType *tmp_obj;		tmp_obj = (PixelType *) calloc( whd, sizeof(PixelType) );
-	PixelType *tmp_sum;		tmp_sum = (PixelType *) calloc( whd, sizeof(PixelType) );
+	PixelType *tmp_obj;		
+	tmp_obj = (PixelType *) calloc( whd, sizeof(PixelType) );
+	PixelType *tmp_sum;		
+	tmp_sum = (PixelType *) calloc( whd, sizeof(PixelType) );
 
 	float al1, al2, al3, sum; double mean_norm=0;
 	float Rsheet, Rblob, Rtube, Rnoise;
@@ -148,22 +149,19 @@ void MemoryEfficientObjectnessFilter::GenerateObjectnessImage(){
 
     unsigned pixelsInRoi = 0;
 
-	for (int k=0 ; k<d ; k++)
-	{
+	for (int k = 0 ; k < d ; k++){
 	    image_index[2] = k;
-		pk=wh; p2k=2*wh; mk=-wh; m2k=-2*wh;
-		if ( (k<2) || (k>d-3) )
-		{
-			if (k==0)	{mk=0; m2k=0;}
-			if (k==d-1) {pk=0; p2k=0;}
-			if (k==1)	m2k=-wh;
-			if (k==d-2) p2k= wh;
+		pk = wh; p2k=2 * wh; mk =- wh; m2k =- 2 * wh;
+		if ((k < 2) || (k > d-3)){
+			if (k == 0)	{ mk=0; m2k=0; }
+			if (k == d - 1) { pk = 0; p2k = 0; }
+			if (k == 1)	m2k =- wh;
+			if (k == d-2) p2k = wh;
 		}
 
-		for (int j=0 ; j<h; j++)
-		{
+		for (int j=0 ; j<h; j++){
             image_index[1] = j;
-			pj=w; p2j=2*w; mj=-w; m2j=-2*w;
+			pj = w; p2j = 2 * w; mj =- w; m2j =- 2 * w;
 			if ( (j<2) || (j>h-3) )
 			{
 				if (j==0)	{mj=0; m2j=0;}
