@@ -9,22 +9,16 @@
     Version: 1.0
 
 =========================================================================*/
-
-
 #pragma once
 
-
 #include "itkImage.h"
-
 #include "itkImageRegionIterator.h"
 #include "itkImportImageFilter.h"
 #include "vnl/vnl_math.h"
 #include <itkSmoothingRecursiveGaussianImageFilter.h>
 #include "vnl/algo/vnl_symmetric_eigensystem.h"
-
 #include <limits>
 #include "Globals.hpp"
-
 
 //#include "image_utils.h"
 
@@ -34,8 +28,7 @@
 *	shape parameters <=> 3D shape <=> vtk mesh
 */
 
-class MemoryEfficientObjectnessFilter
-{
+class MemoryEfficientObjectnessFilter{
 public:
 	typedef float PixelType;
 	typedef itk::Image< PixelType, 3 > ImageType;
@@ -64,7 +57,6 @@ public:
 	void Update();
 	ImagePointerType GetOutput();
 
-
 private:
 	ImagePointerType input_image, output_image;
 	VectorImagePointerType vector_image;
@@ -88,8 +80,7 @@ private:
 
 using namespace std;
 
-MemoryEfficientObjectnessFilter::MemoryEfficientObjectnessFilter()
-{
+MemoryEfficientObjectnessFilter::MemoryEfficientObjectnessFilter(){
 	alpha = 0.5;
 	beta = 0.5;
 	gamma = 0.5;
@@ -107,19 +98,14 @@ void MemoryEfficientObjectnessFilter::SetAlpha(double a)					{ alpha = a; }
 void MemoryEfficientObjectnessFilter::SetBeta(double b)						{ beta = b; }
 void MemoryEfficientObjectnessFilter::SetGamma(double c)					{ gamma = c; }
 void MemoryEfficientObjectnessFilter::SetSigma(double s)					{ sigma = s; }
-void MemoryEfficientObjectnessFilter::SetBrightObject(bool cond)
-{
+void MemoryEfficientObjectnessFilter::SetBrightObject(bool cond){
 	if (cond)	bright = 1;
 	else		bright = -1;
 }
 void MemoryEfficientObjectnessFilter::ScaleObjectnessMeasureOff() { scaleObjectnessMeasure = false; }
 void MemoryEfficientObjectnessFilter::ScaleObjectnessMeasureOn()  { scaleObjectnessMeasure = true; }
 
-//
-//
-//
-void MemoryEfficientObjectnessFilter::Update()
-{
+void MemoryEfficientObjectnessFilter::Update(){
 	typedef itk::SmoothingRecursiveGaussianImageFilter <ImageType> FilterType;
 	FilterType::Pointer filter = FilterType::New();
 
@@ -127,16 +113,13 @@ void MemoryEfficientObjectnessFilter::Update()
 	filter->SetSigma( sigma );
 	filter->Update();
 	output_image = filter->GetOutput();
-
 	output_image->DisconnectPipeline();
-
 	GenerateObjectnessImage();
 }
 
 MemoryEfficientObjectnessFilter::ImagePointerType MemoryEfficientObjectnessFilter::GetOutput()	{ return output_image; }
 
-void MemoryEfficientObjectnessFilter::GenerateObjectnessImage()
-{
+void MemoryEfficientObjectnessFilter::GenerateObjectnessImage(){
 	// define variables for image size
 	int w,h,d,wh,whd;
 	w = output_image->GetLargestPossibleRegion().GetSize()[0];
@@ -325,11 +308,6 @@ void MemoryEfficientObjectnessFilter::solve_3x3_symmetric_eigensystem(
     }
 }
 
-
-
-//
-//
-//
 //sorted by increasing absolute value ;
 //ALGO FROM WIKIPEDIA, for finding the eigenvalues, but not the eigenvectors...
 void MemoryEfficientObjectnessFilter::Eigenvalues_3_3_symetric(
