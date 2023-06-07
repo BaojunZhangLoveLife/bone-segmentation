@@ -83,7 +83,8 @@ boost::tuples::tuple<UCharImagePtr, FloatImagePtr, UCharImagePtr> compute(ShortI
     logger("Thresholding input image");
     ShortImagePtr thresholdedInputCT = FilterUtils<ShortImage>::thresholding(ImageUtils<ShortImage>::duplicate(inputCT), 25, 600);
 
-    vector<float> scales; scales.push_back(sigmaSmallScale);
+    vector<float> scales;
+    scales.push_back(sigmaSmallScale);
     FloatImagePtr smallScaleSheetnessImage = multiscaleSheetness(FilterUtils<ShortImage, FloatImage>::cast(thresholdedInputCT), scales, roi);
 
     logger("Estimating soft-tissue voxels");
