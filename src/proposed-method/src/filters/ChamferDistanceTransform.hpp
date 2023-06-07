@@ -125,17 +125,17 @@ private:
         addToTemplateIfPositiveWeight(templ, -1, -1,  0, b);
         addToTemplateIfPositiveWeight(templ, -1, +1,  0, b);
 
-            addToTemplateIfPositiveWeight(templ,  0,  0, -1, a);
+        addToTemplateIfPositiveWeight(templ,  0,  0, -1, a);
 
-            addToTemplateIfPositiveWeight(templ, -1,  0, -1, b);
-            addToTemplateIfPositiveWeight(templ, +1,  0, -1, b);
-            addToTemplateIfPositiveWeight(templ,  0, -1, -1, b);
-            addToTemplateIfPositiveWeight(templ,  0, +1, -1, b);
+        addToTemplateIfPositiveWeight(templ, -1,  0, -1, b);
+        addToTemplateIfPositiveWeight(templ, +1,  0, -1, b);
+        addToTemplateIfPositiveWeight(templ,  0, -1, -1, b);
+        addToTemplateIfPositiveWeight(templ,  0, +1, -1, b);
 
-            addToTemplateIfPositiveWeight(templ, -1, -1, -1, c);
-            addToTemplateIfPositiveWeight(templ, -1, +1, -1, c);
-            addToTemplateIfPositiveWeight(templ, +1, -1, -1, c);
-            addToTemplateIfPositiveWeight(templ, +1, +1, -1, c);
+        addToTemplateIfPositiveWeight(templ, -1, -1, -1, c);
+        addToTemplateIfPositiveWeight(templ, -1, +1, -1, c);
+        addToTemplateIfPositiveWeight(templ, +1, -1, -1, c);
+        addToTemplateIfPositiveWeight(templ, +1, +1, -1, c);
 
         return templ;
 
