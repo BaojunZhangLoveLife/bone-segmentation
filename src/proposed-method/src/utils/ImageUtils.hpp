@@ -12,12 +12,7 @@
     Version: 1.0
 
 =========================================================================*/
-
-
-
-
 #pragma once
-
 
 #include "itkImage.h"
 #include "itkImageFileReader.h"
@@ -30,8 +25,6 @@
 
 template<class ImageType>
 class ImageUtils {
-
-
     typedef itk::ImageFileReader< ImageType >  ReaderType;
     typedef typename ReaderType::Pointer  ReaderTypePointer;
     typedef itk::ImageFileWriter< ImageType >  WriterType;
@@ -49,9 +42,7 @@ class ImageUtils {
     typedef typename ImageType::OffsetType OffsetType;
     typedef typename ImageType::SpacingType SpacingType;
 
-
 private:
-
     static void ITKImageToVTKImage(ImagePointerType image) {
 
         // fix origin
@@ -71,12 +62,7 @@ private:
         ITKImageToVTKImage(image);
     }
 
-
-
-
 public:
-
-
     /* Read an itk image from a file */
     static ImagePointerType readImage(std::string fileName) {
         ReaderTypePointer reader = ReaderType::New();
@@ -107,7 +93,6 @@ public:
         writer->Update();
     }
 
-
     static ImagePointerType duplicate(ImagePointerType img) {
        DuplicatorPointerType duplicator = DuplicatorType::New();
        duplicator->SetInputImage( img );
@@ -117,7 +102,6 @@ public:
 
 
     static ImagePointerType createEmpty(const RegionSizeType & size) {
-
        IndexType startIndex;
        startIndex.Fill(0);
 
@@ -158,8 +142,6 @@ public:
         innerRegion.SetSize(newSize);
 
         return innerRegion;
-
-
     }
 
 
@@ -190,10 +172,6 @@ public:
             if ((unsigned)idx[i] < 0 || (unsigned)idx[i] >= size[i])
                 return false;
         }
-
         return true;
     }
-
-
-
 };
