@@ -37,7 +37,6 @@ template<class LabelImage, class DistanceImage, class PropagationImage = Distanc
 class ChamferDistanceTransform {
 
 public:
-
     enum DistanceType {
         MANHATTEN, // 3 positions
         CHESSBOARD, // 9 positions
@@ -45,9 +44,7 @@ public:
         COMPLETE_EUCLIDEAN // 13 positions
     };
 
-
 private:
-
     typedef typename DistanceImage::Pointer DistanceImagePointer;
     typedef typename LabelImage::Pointer LabelImagePointer;
     typedef typename PropagationImage::Pointer PropagationImagePointer;
@@ -81,7 +78,6 @@ private:
 
     typedef std::vector<TemplateElement> ChamferTemplate;
 
-
     void addToTemplateIfPositiveWeight(
         ChamferTemplate & templ, int x, int y, int z, float weight) {
 
@@ -96,11 +92,8 @@ private:
     Pre-compude chamfer forward distance template
     */
     ChamferTemplate getForwardTemplate(DistanceType type) {
-
         ChamferTemplate templ;
-
         float a,b,c;
-
         // set weight according to the distance type
         switch (type) {
             case MANHATTEN:
@@ -119,14 +112,12 @@ private:
                 assert(false);
         }
 
-
         addToTemplateIfPositiveWeight(templ, -1,  0,  0, a);
         addToTemplateIfPositiveWeight(templ,  0, -1,  0, a);
         addToTemplateIfPositiveWeight(templ, -1, -1,  0, b);
         addToTemplateIfPositiveWeight(templ, -1, +1,  0, b);
 
         addToTemplateIfPositiveWeight(templ,  0,  0, -1, a);
-
         addToTemplateIfPositiveWeight(templ, -1,  0, -1, b);
         addToTemplateIfPositiveWeight(templ, +1,  0, -1, b);
         addToTemplateIfPositiveWeight(templ,  0, -1, -1, b);
@@ -138,10 +129,7 @@ private:
         addToTemplateIfPositiveWeight(templ, +1, +1, -1, c);
 
         return templ;
-
     }
-
-
     /*
                            /  infty       for labelImg[idx] = 0,
     InitialDistance[idx] =
@@ -165,11 +153,6 @@ private:
 
         return distanceImg;
     }
-
-
-
-
-
 
     void updatePixel(
         DistanceImagePointer distMap,
@@ -204,10 +187,6 @@ private:
         distMap->SetPixel(centerPixelIndex, minDistance);
     }
 
-
-
-
-
     void forwardSweep(DistanceImagePointer distMap,ChamferTemplate templ) {
 
         // perform forward sweep
@@ -216,9 +195,6 @@ private:
             updatePixel(distMap, it.GetIndex(), templ);
         }
     }
-
-
-
 
     void backwardSweep(DistanceImagePointer distMap,ChamferTemplate templ) {
 
@@ -234,18 +210,12 @@ private:
         for (it.GoToReverseBegin(); !it.IsAtReverseEnd(); --it) {
             updatePixel(distMap,it.GetIndex(), templ);
         }
-
     }
-
-
-
-
 
 public:
 
     // constructor
-    ChamferDistanceTransform() : _propagationImage(nullptr)
-    {}
+    ChamferDistanceTransform() : _propagationImage(nullptr){}
 
     void setPropagationImage(PropagationImagePointer p) {
         _propagationImage = p;
@@ -254,8 +224,6 @@ public:
     PropagationImagePointer getPropagationImage() {
         return _propagationImage;
     }
-
-
 
     string getDistanceTypeDescr(DistanceType type) {
 
@@ -272,11 +240,6 @@ public:
                 assert(false);
         }
     }
-
-
-
-
-
 
     /*
     Input binary image,
@@ -305,8 +268,6 @@ public:
         // done :)
         return distanceMap;
     }
-
-
 };
 
 #endif
