@@ -264,10 +264,7 @@ void MemoryEfficientObjectnessFilter::GenerateObjectnessImage()
 
 //sorted by increasing absolute value
 void MemoryEfficientObjectnessFilter::solve_3x3_symmetric_eigensystem(
-    float M11, float M12, float M13, float M22, float M23, float M33,
-    VectorType & eigenVals, VectorType & firstPrincipalEigenvector
-) {
-
+	float M11, float M12, float M13, float M22, float M23, float M33, VectorType & eigenVals, VectorType & firstPrincipalEigenvector){
     // prepare
     float vals[9] = {
         M11, M12, M13,
@@ -280,22 +277,17 @@ void MemoryEfficientObjectnessFilter::solve_3x3_symmetric_eigensystem(
     vnl_symmetric_eigensystem<float> eigenSolver(m);
 
     // store eigenvalues
-    for (unsigned i=0; i<3; ++i) {
-        eigenVals[i] = eigenSolver.get_eigenvalue(i);
-    }
-
+    for (unsigned i=0; i<3; ++i) eigenVals[i] = eigenSolver.get_eigenvalue(i);
+    
     // sort eigenvalues by increasing absolute values
 	if (abs(eigenVals[0])>abs(eigenVals[1])) {swap(eigenVals[0],eigenVals[1]); }
 	if (abs(eigenVals[1])>abs(eigenVals[2])) {swap(eigenVals[1],eigenVals[2]); }
 	if (abs(eigenVals[0])>abs(eigenVals[1])) {swap(eigenVals[0],eigenVals[1]); }
 
     // find the first principal eigenvector
-    for (unsigned i=0; i<3; ++i) {
+    for (unsigned i = 0; i < 3; ++ i) {
         if (abs(eigenSolver.get_eigenvalue(i)) == abs(eigenVals[2])) {
-
-            for (unsigned idx=0; idx < 3; ++idx)
-                firstPrincipalEigenvector[idx] = eigenSolver.get_eigenvector(i)[idx];
-
+            for (unsigned idx=0; idx < 3; ++idx)  firstPrincipalEigenvector[idx] = eigenSolver.get_eigenvector(i)[idx];
             break;
         }
     }
@@ -340,9 +332,3 @@ void MemoryEfficientObjectnessFilter::Eigenvalues_3_3_symetric(
 	eigenVals[1] = (float)l2;
 	eigenVals[2] = (float)l3;
 }
-
-
-
-
-
-
