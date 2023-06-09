@@ -126,17 +126,14 @@ void MemoryEfficientObjectnessFilter::GenerateObjectnessImage()
 
 	//variables for browsing through image
 	ImageType::IndexType image_index;	
-	image_index[0]=0;
-	image_index[1]=0;
-	image_index[2]=0;
+	image_index[0] = image_index[1] = image_index[2] = 0;
 
 	int add;
 	int pi, mi, pj, mj, pk, mk, p2i, m2i, p2j, m2j, p2k, m2k;
 
 	PixelType *img;
 	img = output_image->GetBufferPointer();
-	float hxx, hyy, hzz, hxy, hxz, hyz;
-	float tmp;
+	float hxx, hyy, hzz, hxy, hxz, hyz, tmp;
 
 	PixelType *tmp_obj;	tmp_obj = (PixelType *) calloc( whd, sizeof(PixelType) );
 	PixelType *tmp_sum;	tmp_sum = (PixelType *) calloc( whd, sizeof(PixelType) );
@@ -160,17 +157,15 @@ void MemoryEfficientObjectnessFilter::GenerateObjectnessImage()
 		for (int j=0 ; j<height; j++){
             image_index[1] = j;
 			pj = width; p2j = 2 * width; mj =- width; m2j =- 2 * width;
-			if ( (j<2) || (j>height-3) )
-			{
+			if ((j<2) || (j>height-3)){
 				if (j==0)	{mj=0; m2j=0;}
 				if (j==height-1) {pj=0; p2j=0;}
 				if (j==1)	m2j=-width;
 				if (j==height-2) p2j= width;
 			}
-			for (int i=0 ; i<width ; i++)
-			{
+			for (int i = 0 ; i < width ; i++){
                 image_index[0] = i;
-				add = i + j*width + k*wh; 
+				add = i + j * width + k * wh; 
 
                 if (roi_image.IsNotNull() && roi_image->GetPixel(image_index) == 0) {
                     tmp_obj[add] = 0;
@@ -179,22 +174,22 @@ void MemoryEfficientObjectnessFilter::GenerateObjectnessImage()
 
                 pixelsInRoi++;
 
-				pi=1; p2i=2; mi=-1;	m2i=-2;
+				pi = 1; p2i = 2; mi =- 1;	m2i =- 2;
 				if ( (i<2) || (i>width-3)){
 					if (i==0)	{mi=0; m2i=0;}
 					if (i==width-1) {pi=0; p2i=0;}
 					if (i==1)	m2i=-1;
-					if (i==width-2) p2i= 1;
+					if (i==width-2) p2i = 1;
 				}
 
 				tmp = 2.0*img[add];
 
-				hxx = (img[add+m2i] - tmp + img[add+p2i])/4.0;
-				hyy = (img[add+m2j] - tmp + img[add+p2j])/4.0;
-				hzz = (img[add+m2k] - tmp + img[add+p2k])/4.0;
-				hxy = (img[add+mi+mj] - img[add+pi+mj] - img[add+mi+pj] + img[add+pi+pj])/4.0;
-				hxz = (img[add+mi+mk] - img[add+pi+mk] - img[add+mi+pk] + img[add+pi+pk])/4.0;
-				hyz = (img[add+mj+mk] - img[add+pj+mk] - img[add+mj+pk] + img[add+pj+pk])/4.0;
+				hxx = (img[add + m2i] - tmp + img[add + p2i]) / 4.0;
+				hyy = (img[add + m2j] - tmp + img[add + p2j]) / 4.0;
+				hzz = (img[add + m2k] - tmp + img[add + p2k]) / 4.0;
+				hxy = (img[add + mi + mj] - img[add + pi + mj] - img[add + mi + pj] + img[add + pi + pj]) / 4.0;
+				hxz = (img[add + mi + mk] - img[add + pi + mk] - img[add + mi + pk] + img[add + pi + pk]) / 4.0;
+				hyz = (img[add + mj + mk] - img[add + pj + mk] - img[add + mj + pk] + img[add + pj + pk]) / 4.0;
 
 				//	特征值
                 VectorType eigenVals;
@@ -236,18 +231,15 @@ void MemoryEfficientObjectnessFilter::GenerateObjectnessImage()
 
     logger("Mean norm = %1%") % mean_norm;
 
-	for (int k=0 ; k<depth ; k++)
-	{
+	for (int k=0 ; k<depth ; k++){
 		image_index[2] = k;
-		for (int j=0 ; j<height; j++)
-		{
+		for (int j=0 ; j<height; j++){
 			image_index[1] = j;
-			for (int i=0 ; i<width ; i++)
-			{
+			for (int i=0 ; i<width ; i++){
 				image_index[0] = i;
 				add = i + j*width + k*wh;
 				Rnoise = tmp_sum[add]/mean_norm;
-				tmp_obj[add] *= (1 - exp(-Rnoise*Rnoise/0.25));
+				tmp_obj[add] *= (1 - exp(-Rnoise * Rnoise / 0.25));
 				output_image->SetPixel(image_index, tmp_obj[add]);
 			}
 		}
