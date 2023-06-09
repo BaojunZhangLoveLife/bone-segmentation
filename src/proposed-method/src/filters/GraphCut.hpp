@@ -12,10 +12,7 @@
     Version: 1.0
 
 =========================================================================*/
-
-
 #pragma once
-
 
 #include "itkImage.h"
 #include "itkImageRegionIterator.h"
@@ -26,18 +23,13 @@
 #include "ImageUtils.hpp"
 #include "graph.h"
 
-
-
 template<unsigned int Dimension> // dimension of the input image
 class GraphCutSegmentation {
 
 public:
-
-
     typedef unsigned LabelID;
     typedef int PixelID;
     typedef int EnergyTerm;
-
 
     typedef typename itk::Image<LabelID, Dimension> LabelIdImage;
     typedef typename itk::Image<PixelID, Dimension> PixelIdImage;
@@ -51,8 +43,6 @@ public:
 
     typedef Graph<EdgeCapacityType,EdgeCapacityType,FlowType> GraphType;
 
-
-
     struct DataCostFunction {
         /* Compute data cost of assigning @label to the pixel with index @idx */
         virtual int compute(ImageIndex idx, LabelID label) = 0;
@@ -63,49 +53,22 @@ public:
         virtual int compute(ImageIndex idx1, ImageIndex idx2 ) = 0;
     };
 
-
-
 private:
-
-
-
-    //============================
-    // Member variables:
-
-    /* Image to hold a unique ID for each pixel in ROI */
     PixelIdImagePointer _pixelIdImage;
-
     /* Image to hold a label for each pixel */
     LabelIdImagePointer _labelIdImage;
-
     /* Third-party graph-cut algorithm*/
     GraphType *_gc;
-
     /* Number of pixels in ROI */
     unsigned int _totalPixelsInROI;
-
     /* Number of neighbors */
     unsigned int _totalNeighbors;
-
-
-
-
-
-
     //============================
     // Member functions:
 
-
-    /*
-        Assign unique identifiers in pixels in ROI and store them in
-        _pixelIdImage. Identifiers are assigned as follows: 0, 1, 2, ...
-        Pixels outside ROI are assigned the value -1.
-    */
     void assignIdsToPixels(LabelIdImagePointer  img) {
-
         // create a new image
-        _pixelIdImage = ImageUtils<PixelIdImage>::createEmpty(
-            img->GetLargestPossibleRegion().GetSize());
+        _pixelIdImage = ImageUtils<PixelIdImage>::createEmpty(img->GetLargestPossibleRegion().GetSize());
 
         // fill it with identifiers
         itk::ImageRegionIteratorWithIndex<LabelIdImage> it(
@@ -130,31 +93,21 @@ private:
 
     }
 
-
     void initializeDataCosts(DataCostFunction * dataCostFunction) {
 
-        itk::ImageRegionIteratorWithIndex<PixelIdImage>
-            itID(_pixelIdImage, _pixelIdImage->GetLargestPossibleRegion());
+        itk::ImageRegionIteratorWithIndex<PixelIdImage> itID(_pixelIdImage, _pixelIdImage->GetLargestPossibleRegion());
 
         for (itID.GoToBegin(); !itID.IsAtEnd(); ++itID) {
-
             PixelID pixelId = itID.Get();
-
             if (pixelId >= 0) {
-
                 ImageIndex pixelIndex = itID.GetIndex();
-
                 int dataCostSource = dataCostFunction->compute(pixelIndex, 0);
                 int dataCostSink = dataCostFunction->compute(pixelIndex, 1);
-
                 _gc->add_tweights(pixelId, dataCostSource, dataCostSink);
 
-            } // if
+            }
         } // iteration through image
     }
-
-
-
 
     void initializeNeighbours(
         SmoothnessCostFunction * smoothnessCostFunction
@@ -209,9 +162,7 @@ private:
                 } // for dim
 
         } // iterating through ROI image
-
     }
-
 
     void updateLabelImageAccordingToGraph() {
 
@@ -236,18 +187,6 @@ private:
         }
     }
 
-
-
-
-    /*
-        Build the graph for the graph-cut segmentation.
-
-        Labels in the input image should be labelled as follows:
-
-            0 - Pixels outside ROI, these pixels are ingored by the graph-cut
-                (useful e.g. to save memory)
-            1 - Pixels within ROI
-    */
     void buildGraph(
         LabelIdImagePointer labelImage,
         DataCostFunction * dataCostFunction,
@@ -265,18 +204,8 @@ private:
         initializeNeighbours(smoothnessCostFunction);
         logger("%d t-links added") % _totalNeighbors;
 
-//#if LOG_GRAPH_CUT_DETAILS == 1
-//        logger.log("Segm - Graph nodes", _totalPixelsInROI);
-//        logger.log("Segm - Graph neighbours", _totalNeighbors);
-//#endif
-
         _labelIdImage = labelImage;
     }
-
-
-
-
-
     /*
         Perform alpha-expansions and return the labeled image
     */
@@ -296,42 +225,14 @@ private:
 
 
 public:
-
-
     // Constructor
-    GraphCutSegmentation()
-    : _gc(NULL)
+    GraphCutSegmentation(): _gc(NULL)
     { /* empty body */ };
 
-
-
-    /*
-    Compute binary labelling of an image using Boykov and Jolly's Graph-Cut
-    Segmentation. We use a third-party library by Kolmogorov to compute
-    the minimum cut.
-
-    Pixels in the ROI image should be as follows:
-        0 - Pixels outside ROI, these pixels are ingored by the graph-cut
-            (useful e.g. to save memory)
-        1 - Pixels within ROI
-    */
-    LabelIdImagePointer optimize(
-        LabelIdImagePointer roiImage,
-        DataCostFunction * dataCostFunction,
-        SmoothnessCostFunction * smoothnessCostFunction
-    ) {
-
+    LabelIdImagePointer optimize(LabelIdImagePointer roiImage, DataCostFunction * dataCostFunction, SmoothnessCostFunction * smoothnessCostFunction) {
         //ProcessInfo::printStatus("Going to build graph");
         buildGraph(roiImage, dataCostFunction, smoothnessCostFunction);
         //ProcessInfo::printStatus("Graph built");
         return compute();
-
     }
-
-
-
 };
-
-
-
-
