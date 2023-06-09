@@ -187,11 +187,7 @@ private:
         }
     }
 
-    void buildGraph(
-        LabelIdImagePointer labelImage,
-        DataCostFunction * dataCostFunction,
-        SmoothnessCostFunction * smoothnessCostFunction
-    ) {
+    void buildGraph(LabelIdImagePointer labelImage,DataCostFunction * dataCostFunction,SmoothnessCostFunction * smoothnessCostFunction) {
         assignIdsToPixels(labelImage);
 
         logger("Building graph, %d nodes") % _totalPixelsInROI;
@@ -210,19 +206,15 @@ private:
         Perform alpha-expansions and return the labeled image
     */
     LabelIdImagePointer compute() {
-
         assert(_gc != NULL);
-
         logger("Graph built. Computing the max flow");
         _gc->maxflow();
         logger("Max flow computed");
         updateLabelImageAccordingToGraph();
-
         // Ende :)
         delete _gc;
         return _labelIdImage;
     }
-
 
 public:
     // Constructor
