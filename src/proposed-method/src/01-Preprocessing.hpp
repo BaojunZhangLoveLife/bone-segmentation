@@ -71,8 +71,8 @@ FloatImagePtr chamferDistance(UCharImagePtr image) {
 }
 
 /*
-Input: Normalized CT image, scales for the sheetness measure
-Output: (ROI, MultiScaleSheetness, SoftTissueEstimation)
+    Input: Normalized CT image, scales for the sheetness measure
+    Output: (ROI, MultiScaleSheetness, SoftTissueEstimation)
 */
 boost::tuples::tuple<UCharImagePtr, FloatImagePtr, UCharImagePtr> compute(ShortImagePtr inputCT,float sigmaSmallScale,vector<float> sigmasLargeScale) {
 
@@ -101,9 +101,7 @@ boost::tuples::tuple<UCharImagePtr, FloatImagePtr, UCharImagePtr> compute(ShortI
     for (it.GoToBegin(); !it.IsAtEnd(); ++it) {
         short hu = it.Get();
         float sheetness = smallScaleSheetnessImage->GetPixel(it.GetIndex());
-
         bool bone = (hu > 400) || (hu > 250 && sheetness > 0.6);
-
         boneEstimation->SetPixel(it.GetIndex(), bone ? 1 : 0);
     }
 

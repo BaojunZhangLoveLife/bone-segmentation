@@ -138,14 +138,12 @@ void MemoryEfficientObjectnessFilter::GenerateObjectnessImage()
 	float hxx, hyy, hzz, hxy, hxz, hyz;
 	float tmp;
 
-	PixelType *tmp_obj;		
-	tmp_obj = (PixelType *) calloc( whd, sizeof(PixelType) );
-	PixelType *tmp_sum;		
-	tmp_sum = (PixelType *) calloc( whd, sizeof(PixelType) );
+	PixelType *tmp_obj;	tmp_obj = (PixelType *) calloc( whd, sizeof(PixelType) );
+	PixelType *tmp_sum;	tmp_sum = (PixelType *) calloc( whd, sizeof(PixelType) );
 
 	float al1, al2, al3, sum; double mean_norm=0;
 	float Rsheet, Rblob, Rtube, Rnoise;
-	float alpha_sq = 2*alpha*alpha, beta_sq = 2*beta*beta, gamma_sq = 2*gamma*gamma;
+	float alpha_sq = 2 * alpha * alpha, beta_sq = 2 * beta * beta, gamma_sq = 2 * gamma * gamma;
 
     unsigned pixelsInRoi = 0;
 
@@ -211,19 +209,18 @@ void MemoryEfficientObjectnessFilter::GenerateObjectnessImage()
 
 
 				al1 = fabs(eigenVals[0]); al2 = fabs(eigenVals[1]); al3 = fabs(eigenVals[2]);
-				sum = al1+al2+al3;
-				mean_norm+=sum;
-				tmp_sum[add]=sum;
+				sum = al1 + al2 + al3;
+				mean_norm += sum;
+				tmp_sum[add] = sum;
 
-				if (al3==0)
-				{
+				if (al3==0){
 					tmp_obj[add] = 0;
 				}
 				else
 				{
-					Rtube  = al1 / (al2*al3);
+					Rtube  = al1 / (al2 * al3);
 					Rsheet = al2 / al3;
-					Rblob  = 3.0*al1 / sum;
+					Rblob  = 3.0 * al1 / sum;
 
 
 					if (objectDimension==1){
