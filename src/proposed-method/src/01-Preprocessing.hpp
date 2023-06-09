@@ -48,10 +48,8 @@ namespace Preprocessing {
             }
 
             // update the multiscale sheetness, take the value which is larger in absolute value
-            itk::ImageRegionIterator<FloatImage>
-                itMulti(singleScaleSheetness,singleScaleSheetness->GetLargestPossibleRegion());
-            itk::ImageRegionIterator<FloatImage>
-                itSingle(multiscaleSheetness,multiscaleSheetness->GetLargestPossibleRegion());
+            itk::ImageRegionIterator<FloatImage>  itMulti(singleScaleSheetness,singleScaleSheetness->GetLargestPossibleRegion());
+            itk::ImageRegionIterator<FloatImage>  itSingle(multiscaleSheetness,multiscaleSheetness->GetLargestPossibleRegion());
             for (itMulti.GoToBegin(),itSingle.GoToBegin();!itMulti.IsAtEnd();++itMulti, ++itSingle) {
                 float multiVal = itMulti.Get();
                 float singleVal = itSingle.Get();

@@ -53,6 +53,7 @@ public:
 
 	void Update();
 	ImagePointerType GetOutput();
+
 private:
 	ImagePointerType input_image, output_image;
 	VectorImagePointerType vector_image;
@@ -84,14 +85,14 @@ MemoryEfficientObjectnessFilter::MemoryEfficientObjectnessFilter(){
 	bright = 1;
 }
 
-void MemoryEfficientObjectnessFilter::SetImage(ImagePointerType image)		{ input_image = image; }
+void MemoryEfficientObjectnessFilter::SetImage(ImagePointerType image)					{ input_image = image; }
 void MemoryEfficientObjectnessFilter::SetVectorImage(VectorImagePointerType image)		{ vector_image = image; }
-void MemoryEfficientObjectnessFilter::SetROIImage(ROIImagePointerType image)		{ roi_image = image; }
-void MemoryEfficientObjectnessFilter::SetObjectDimension(unsigned int dim)	{ objectDimension = dim; }
-void MemoryEfficientObjectnessFilter::SetAlpha(double a)					{ alpha = a; }
-void MemoryEfficientObjectnessFilter::SetBeta(double b)						{ beta = b; }
-void MemoryEfficientObjectnessFilter::SetGamma(double c)					{ gamma = c; }
-void MemoryEfficientObjectnessFilter::SetSigma(double s)					{ sigma = s; }
+void MemoryEfficientObjectnessFilter::SetROIImage(ROIImagePointerType image)			{ roi_image = image; }
+void MemoryEfficientObjectnessFilter::SetObjectDimension(unsigned int dim)				{ objectDimension = dim; }
+void MemoryEfficientObjectnessFilter::SetAlpha(double a)								{ alpha = a; }
+void MemoryEfficientObjectnessFilter::SetBeta(double b)									{ beta = b; }
+void MemoryEfficientObjectnessFilter::SetGamma(double c)								{ gamma = c; }
+void MemoryEfficientObjectnessFilter::SetSigma(double s)								{ sigma = s; }
 void MemoryEfficientObjectnessFilter::SetBrightObject(bool cond){
 	if (cond)	bright = 1;
 	else		bright = -1;
@@ -132,12 +133,11 @@ void MemoryEfficientObjectnessFilter::GenerateObjectnessImage()
 	int add;
 	int pi, mi, pj, mj, pk, mk, p2i, m2i, p2j, m2j, p2k, m2k;
 
-	//
-	PixelType *img; //img = (PixelType *) calloc( wh*d, sizeof(PixelType) );
+	PixelType *img;
 	img = output_image->GetBufferPointer();
 	float hxx, hyy, hzz, hxy, hxz, hyz;
 	float tmp;
-	//float *l; l = (float *)calloc(3,sizeof(float));
+
 	PixelType *tmp_obj;		
 	tmp_obj = (PixelType *) calloc( whd, sizeof(PixelType) );
 	PixelType *tmp_sum;		
@@ -172,9 +172,8 @@ void MemoryEfficientObjectnessFilter::GenerateObjectnessImage()
 			for (int i=0 ; i<w ; i++)
 			{
                 image_index[0] = i;
-				add = i + j*w + k*wh; //current pixel
+				add = i + j*w + k*wh; 
 
-                // dont process pixels outside roi
                 if (roi_image.IsNotNull() && roi_image->GetPixel(image_index) == 0) {
                     tmp_obj[add] = 0;
                     continue;
@@ -200,14 +199,11 @@ void MemoryEfficientObjectnessFilter::GenerateObjectnessImage()
 				hxz = (img[add+mi+mk] - img[add+pi+mk] - img[add+mi+pk] + img[add+pi+pk])/4.0;
 				hyz = (img[add+mj+mk] - img[add+pj+mk] - img[add+mj+pk] + img[add+pj+pk])/4.0;
 
-
+				//	特征值
                 VectorType eigenVals;
-
                 if (vector_image.IsNotNull()) {
                     VectorType principalEigenVector;
-                    solve_3x3_symmetric_eigensystem(
-                        hxx, hxy, hxz, hyy, hyz, hzz,
-                        eigenVals, principalEigenVector);
+                    solve_3x3_symmetric_eigensystem(hxx, hxy, hxz, hyy, hyz, hzz, eigenVals, principalEigenVector);
                     vector_image->SetPixel(image_index, principalEigenVector);
                 } else {
                     Eigenvalues_3_3_symetric(hxx, hxy, hxz, hyy, hyz, hzz, eigenVals);
@@ -230,12 +226,11 @@ void MemoryEfficientObjectnessFilter::GenerateObjectnessImage()
 					Rblob  = 3.0*al1 / sum;
 
 
-					if (objectDimension==1)
-					{//Vesselness
+					if (objectDimension==1){
+						//Vesselness
 						tmp_obj[add] = bright * (-eigenVals[2]/al3) * (1-exp(-Rsheet*Rsheet/alpha_sq)) * exp(-Rtube*Rtube/beta_sq) * exp(-Rblob*Rblob/gamma_sq);
-					}
-					else
-					{//Sheetness
+					}else{
+						//Sheetness
 						tmp_obj[add] = bright * (-eigenVals[2]/al3) * exp(-Rsheet*Rsheet/alpha_sq) * exp(-Rtube*Rtube/beta_sq) * exp(-Rblob*Rblob/gamma_sq);
 					}
 					if (scaleObjectnessMeasure)	 tmp_obj[add] *= al3;
@@ -310,8 +305,7 @@ void MemoryEfficientObjectnessFilter::solve_3x3_symmetric_eigensystem(
 //ALGO FROM WIKIPEDIA, for finding the eigenvalues, but not the eigenvectors...
 void MemoryEfficientObjectnessFilter::Eigenvalues_3_3_symetric(
     float M11, float M12, float M13, float M22, float M23, float M33,
-    VectorType & eigenVals
-) {
+    VectorType & eigenVals) {
 	double a, b, c, d; double t12, t13, t23, s23;
 	a = -1.0;
 	b = M11 + M22 + M33;
