@@ -117,12 +117,12 @@ MemoryEfficientObjectnessFilter::ImagePointerType MemoryEfficientObjectnessFilte
 void MemoryEfficientObjectnessFilter::GenerateObjectnessImage()
 {
 	// define variables for image size
-	int w,h,d,wh,whd;
-	w = output_image->GetLargestPossibleRegion().GetSize()[0];
-	h = output_image->GetLargestPossibleRegion().GetSize()[1];
-	d = output_image->GetLargestPossibleRegion().GetSize()[2];
-	wh = w * h;
-	whd = wh * d;
+	int width,height,depth,wh,whd;
+	width = output_image->GetLargestPossibleRegion().GetSize()[0];
+	height = output_image->GetLargestPossibleRegion().GetSize()[1];
+	depth = output_image->GetLargestPossibleRegion().GetSize()[2];
+	wh = width * height;
+	whd = wh * depth;
 
 	//variables for browsing through image
 	ImageType::IndexType image_index;	
@@ -147,30 +147,30 @@ void MemoryEfficientObjectnessFilter::GenerateObjectnessImage()
 
     unsigned pixelsInRoi = 0;
 
-	for (int k = 0 ; k < d ; k++){
+	for (int k = 0 ; k < depth ; k++){
 	    image_index[2] = k;
 		pk = wh; p2k=2 * wh; mk =- wh; m2k =- 2 * wh;
-		if ((k < 2) || (k > d-3)){
+		if ((k < 2) || (k > depth-3)){
 			if (k == 0)	{ mk=0; m2k=0; }
-			if (k == d - 1) { pk = 0; p2k = 0; }
+			if (k == depth - 1) { pk = 0; p2k = 0; }
 			if (k == 1)	m2k =- wh;
-			if (k == d-2) p2k = wh;
+			if (k == depth-2) p2k = wh;
 		}
 
-		for (int j=0 ; j<h; j++){
+		for (int j=0 ; j<height; j++){
             image_index[1] = j;
-			pj = w; p2j = 2 * w; mj =- w; m2j =- 2 * w;
-			if ( (j<2) || (j>h-3) )
+			pj = width; p2j = 2 * width; mj =- width; m2j =- 2 * width;
+			if ( (j<2) || (j>height-3) )
 			{
 				if (j==0)	{mj=0; m2j=0;}
-				if (j==h-1) {pj=0; p2j=0;}
-				if (j==1)	m2j=-w;
-				if (j==h-2) p2j= w;
+				if (j==height-1) {pj=0; p2j=0;}
+				if (j==1)	m2j=-width;
+				if (j==height-2) p2j= width;
 			}
-			for (int i=0 ; i<w ; i++)
+			for (int i=0 ; i<width ; i++)
 			{
                 image_index[0] = i;
-				add = i + j*w + k*wh; 
+				add = i + j*width + k*wh; 
 
                 if (roi_image.IsNotNull() && roi_image->GetPixel(image_index) == 0) {
                     tmp_obj[add] = 0;
@@ -180,12 +180,11 @@ void MemoryEfficientObjectnessFilter::GenerateObjectnessImage()
                 pixelsInRoi++;
 
 				pi=1; p2i=2; mi=-1;	m2i=-2;
-				if ( (i<2) || (i>w-3) )
-				{
+				if ( (i<2) || (i>width-3)){
 					if (i==0)	{mi=0; m2i=0;}
-					if (i==w-1) {pi=0; p2i=0;}
+					if (i==width-1) {pi=0; p2i=0;}
 					if (i==1)	m2i=-1;
-					if (i==w-2) p2i= 1;
+					if (i==width-2) p2i= 1;
 				}
 
 				tmp = 2.0*img[add];
@@ -215,9 +214,7 @@ void MemoryEfficientObjectnessFilter::GenerateObjectnessImage()
 
 				if (al3==0){
 					tmp_obj[add] = 0;
-				}
-				else
-				{
+				} else {
 					Rtube  = al1 / (al2 * al3);
 					Rsheet = al2 / al3;
 					Rblob  = 3.0 * al1 / sum;
@@ -239,16 +236,16 @@ void MemoryEfficientObjectnessFilter::GenerateObjectnessImage()
 
     logger("Mean norm = %1%") % mean_norm;
 
-	for (int k=0 ; k<d ; k++)
+	for (int k=0 ; k<depth ; k++)
 	{
 		image_index[2] = k;
-		for (int j=0 ; j<h; j++)
+		for (int j=0 ; j<height; j++)
 		{
 			image_index[1] = j;
-			for (int i=0 ; i<w ; i++)
+			for (int i=0 ; i<width ; i++)
 			{
 				image_index[0] = i;
-				add = i + j*w + k*wh;
+				add = i + j*width + k*wh;
 				Rnoise = tmp_sum[add]/mean_norm;
 				tmp_obj[add] *= (1 - exp(-Rnoise*Rnoise/0.25));
 				output_image->SetPixel(image_index, tmp_obj[add]);
