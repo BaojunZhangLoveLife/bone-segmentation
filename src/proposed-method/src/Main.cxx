@@ -127,8 +127,7 @@ int main(int argc, char * argv [])
             );
 
         // segment
-        UCharImagePtr gcResult = Segmentation::compute(
-            inputCT, roi, sheetness, softTissueEst);
+        UCharImagePtr gcResult = Segmentation::compute(inputCT, roi, sheetness, softTissueEst);
 
         // save the result
         logger("Saving temporal result to %s") % filenames.segmOutputPart(i);
